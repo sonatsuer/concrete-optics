@@ -1,6 +1,14 @@
-(ns concrete-optics.core)
+(ns concrete-optics.core
+  (:require [concrete-optics.base :as base] 
+            [concrete-optics.iso.structures :as iso]))
 
-(defn foo
-  "I don't do a whole lot."
-  [x]
-  (println x "Hello, World!"))
+;; Reexports from core
+(def preview base/preview)
+(def put base/put)
+(def optic-compose base/optic-compose)
+
+;; Reexports from iso 
+(def mk-iso iso/mk-iso)
+(def invert-iso iso/invert-iso)
+(def eq iso/eq)
+
