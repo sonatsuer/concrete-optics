@@ -7,24 +7,24 @@
 
 ;; First semigroup
 (defspec first-semigroup-assoc 100
-  (prop/for-all [x gen/int 
-                 y gen/int 
-                 z gen/int]
+  (prop/for-all [x gen/small-integer 
+                 y gen/small-integer 
+                 z gen/small-integer]
                 (associativity-axiom first-semigroup x y z)))
 
 ;; Additive monoid
 (defspec additive-monoid-assoc 100
-  (prop/for-all [x gen/int 
-                 y gen/int 
-                 z gen/int]
+  (prop/for-all [x gen/small-integer 
+                 y gen/small-integer 
+                 z gen/small-integer]
                 (associativity-axiom (monoid->semigroup additive-monoid) x y z)))
 
 (defspec additive-monoid-left-unit 100
-  (prop/for-all [x gen/int]
+  (prop/for-all [x gen/small-integer]
                 (left-unit-axiom additive-monoid x)))
 
 (defspec additive-monoid-right-unit 100
-  (prop/for-all [x gen/int]
+  (prop/for-all [x gen/small-integer]
                 (right-unit-axiom additive-monoid x)))
 
 ;; Vector monoid
