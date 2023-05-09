@@ -2,6 +2,7 @@
   (:require [concrete-optics.iso.structures :refer [eq]]
             [concrete-optics.common :refer [get-capability]]))
 
+;; Capability combinators
 (defn preview
   "Tries to focus on a snge element, produces :nothing if fails."
   [optic whole]
@@ -14,6 +15,32 @@
   [optic focus whole]
   ((get-capability :over optic) (constantly focus)) whole)
 
+(defn view 
+  "Given an optic and a whole, returns the focus."
+  [optic whole]
+  ((get-capability :view optic) whole))
+
+(defn to-list
+  "Given an optic and a whole, returns the focus list."
+  [optic whole]
+  ((get-capability :to-list optic) whole))
+
+(defn review
+  "Generates a whole from a given part."
+  [optic part]
+  ((get-capability :review optic) part))
+
+(defn over 
+  "Lifts a transformation over the part to a transformation on the whole."
+  [optic transformation whole]
+  (((get-capability optic :over) transformation) whole))
+
+(defn traverse
+  "Reduces a collection inside an applicative."
+  [optic applicative part-processor whole]
+  ((get-capability :traverse optic) applicative part-processor) whole)
+
+;; Optic compostition
 (defn- apply-binary-nonnil 
   [binary-op x y]
   (if (or (nil? x) (nil? y)) nil (binary-op x y)))
