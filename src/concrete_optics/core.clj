@@ -33,9 +33,15 @@
 (def field lens/field)
 
 ;; Reexports from traversal
+(def mk-traversal traversal/mk-traversal)
+(def vector-traversal traversal/vector-traversal)
+(def ix traversal/ix)
 
 ;; Reexports from getter
+(def mk-getter getter/mk-getter)
 
 ;; Reexports from setter
+(def mk-setter setter/mk-setter)
 
 ;; Reexports from fold
+(def mk-fold fold/mk-fold)
