@@ -9,15 +9,17 @@ Here is an example of an optic --a traversal to be more precise-- which focuses 
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
-  (optic-compose vector-traversal (ix :a) (predicate-prism "positive" (fn [x] (> x 0)))))
+  (opt/optic-compose opt/vector-traversal (opt/ix :a) (opt/predicate-prism "positive" #(> % 0))))
 
-(def list-positive-as
-  ((:to-list each-positive-a) some-data))
-;; => [1 7]
+(deftest list-positive-as-test
+  (testing "listing elements with a filtering condition"
+    (is (= (opt/to-list each-positive-a some-data)
+           [1 7]))))
 
-(def increase-positive-as
-  (((:over each-positive-a) inc) some-data))
-;; => [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]
+(deftest modify-positive-as-test
+  (testing "modifying only the values fitting a filtering condition"
+    (is (= (opt/over each-positive-a inc some-data)
+           [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
 ```
 
 ## Implementation Idea

@@ -40,26 +40,39 @@
   [monoid]
   (Applicative.
    (fn [_f const] const)
-   (fn [_x] (:unit monoid))
-   (fn [_binary-op] (fn [x y] ((:binary-op monoid) x y)))))
+   (fn [_x] (.unit monoid))
+   (fn [_binary-op] (fn [x y] ((.binary-op monoid) x y)))))
 
+;; Validation related structures
 (defn failure?
   "Checks if the input represents a failure."
   [x]
-  (= (keys x) '(:failure)))
+  (and (map? x) (= (keys x) '(:failure))))
+
+(defn fail-with
+  [x]
+  {:failure x})
 
 (defn validation-applicative
   "Constructs an applicative where failures are accumulated using the semigroup."
   [semigroup]
   (Applicative.
    (fn [f x] (if (failure? x) x (f x)))
-   (fn [x] x)
-   (fn [binary-op x y]
-     (case [(failure? x) (failure? y)]
-       [true true] {:failure ((:binary-op semigroup)) (:failure x) (:failure y)}
-       [true false] x
-       [false true] y
-       [false false] (binary-op x y)))))
+   identity
+   (fn [binary-op]
+     (fn [x y] 
+       (case [(failure? x) (failure? y)]
+         [true true] (fail-with ((.binary-op semigroup) (:failure x) (:failure y)))
+         [true false] x 
+         [false true] y 
+         [false false] (binary-op x y))))))
+
+(defn map-failure 
+  [to-new-failure f]
+  (fn [x] (let [result (f x)]
+            (if (failure? result) 
+              (fail-with (to-new-failure (:failure result)))
+              result))))
 
 (def fail-fast-applicative
   (validation-applicative first-semigroup))

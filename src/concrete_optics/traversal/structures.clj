@@ -15,8 +15,8 @@
   (mk-traversal
    (fn [applicative_f a-to-fb]
      (fn [s]
-       (reduce (fn [fy x] ((:binary-lift applicative_f) conj fy (a-to-fb x)))
-               ((:unit applicative_f) [])
+       (reduce (fn [fy x] (((.binary-lift applicative_f) conj) fy (a-to-fb x)))
+               ((.unit applicative_f) [])
                s)))))
 
 (defn ix
@@ -27,4 +27,3 @@
        (if (contains? m k)
          ((:fmap applicative_f) (fn [x] (assoc-in m [k] x)) (a-to-fb (get-in m [k])))
          ((:unit applicative_f) m))))))
-

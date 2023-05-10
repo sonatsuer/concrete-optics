@@ -4,7 +4,7 @@
 
 ;; Capability combinators
 (defn preview
-  "Tries to focus on a snge element, produces :nothing if fails."
+  "Tries to focus on a sinlge element, produces :nothing if fails."
   [optic whole]
   (let [lst ((get-capability :to-list optic) whole)]
     (if (empty? lst) :nothing (first lst))))
@@ -33,12 +33,12 @@
 (defn over 
   "Lifts a transformation over the part to a transformation on the whole."
   [optic transformation whole]
-  (((get-capability optic :over) transformation) whole))
+  (((get-capability :over optic) transformation) whole))
 
 (defn traverse
   "Reduces a collection inside an applicative."
   [optic applicative part-processor whole]
-  ((get-capability :traverse optic) applicative part-processor) whole)
+  (((get-capability :traverse optic) applicative part-processor) whole))
 
 ;; Optic compostition
 (defn- apply-binary-nonnil 
