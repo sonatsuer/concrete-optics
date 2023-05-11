@@ -1,5 +1,6 @@
 (ns concrete-optics.showcase
   (:require [clojure.test :refer [deftest testing is]]
+            [concrete-optics.common :refer [typed-eq]]
             [concrete-optics.core :as opt]
             [concrete-optics.algebra.structures :as alg]))
 
@@ -33,9 +34,9 @@
 
 (deftest vector-length-test
   (testing "vector-length indeed computes the length"
-    (is (= (vector-length [1 2 3 4 5]) 5)))
+    (is (typed-eq (vector-length [1 2 3 4 5]) 5)))
   (testing "testing for empty vector"
-    (is (= (vector-length []) 0))))
+    (is (typed-eq (vector-length []) 0))))
 
 ;; In combination with other optics, traverse can do more interesting things
 ;; like accessing or modifying groups of nested data.
@@ -50,12 +51,12 @@
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"
-    (is (= (opt/to-list each-positive-a some-data)
+    (is (typed-eq (opt/to-list each-positive-a some-data)
            [1 7]))))
 
 (deftest modify-positive-as-test
   (testing "modifying only the values fitting a filtering condition"
-    (is (= (opt/over each-positive-a inc some-data)
+    (is (typed-eq (opt/over each-positive-a inc some-data)
            [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
 
 ;; There are a lot of useful applicative structures that can be used with
@@ -82,10 +83,10 @@
 
 (deftest fail-fast-validation-test
   (testing "if there are errors, only the first one is kept"
-    (is (= (fail-fast-validation some-numbers) 
+    (is (typed-eq (fail-fast-validation some-numbers) 
            {:failure "Cannot take the square root of -4"})))
   (testing "if there are no errors the result is returned"
-    (is (= (fail-fast-validation some-nonnegative-numbers) 
+    (is (typed-eq (fail-fast-validation some-nonnegative-numbers) 
            [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
 (defn collect-errors-validation
@@ -97,12 +98,12 @@
 
 (deftest collect-errors-validation-test
   (testing "if there are errors, all of them are returned in a vector"
-    (is (= (collect-errors-validation some-numbers)
+    (is (typed-eq (collect-errors-validation some-numbers)
            {:failure ["Cannot take the square root of -4"
                       "Cannot take the square root of -9"
                       "Cannot take the square root of -3"]})))
   (testing "if there are no errors the result is returned"
-    (is (= (collect-errors-validation some-nonnegative-numbers)
+    (is (typed-eq (collect-errors-validation some-nonnegative-numbers)
            [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
 ;; We can even cook up an applicative which, say, counts  errors or determines
@@ -117,10 +118,10 @@
 
 (deftest count-errors-validation-test
   (testing "if there are errors, the error count is returned"
-    (is (= (count-errors-validation some-numbers)
+    (is (typed-eq (count-errors-validation some-numbers)
            {:failure 3})))
   (testing "if there are no errors the result is returned"
-    (is (= (count-errors-validation some-nonnegative-numbers)
+    (is (typed-eq (count-errors-validation some-nonnegative-numbers)
            [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
 ;; Setters, Getters and Folds

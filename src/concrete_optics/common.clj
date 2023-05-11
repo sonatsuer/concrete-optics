@@ -25,3 +25,10 @@
         (throw (Exception. (str "The optic " (classify optic) " does not support " capability)))
         candidate))
     (throw (Exception. (str "Unrecognized capability: " capability)))))
+
+(defn typed-eq
+  "In normal equality you basically check 'content' equality. So for instance [1 2 3]
+   is equal to '(1 2 3). Typed eqaulity checks content _and_ type, so it is stricter.
+   This is meant to be used in tests."
+  [x y]
+  (and (= (type x) (type y)) (= x y)))
