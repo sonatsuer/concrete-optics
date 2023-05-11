@@ -1,6 +1,6 @@
 (ns concrete-optics.test-helpers)
 
-(defn typed-eq-binary
+(defn- typed-eq-binary
   "Binary typed equality, overrides truthiness with actual
    boolean values."
   [x y]
