@@ -1,6 +1,6 @@
 (ns concrete-optics.iso.axioms
   (:require [concrete-optics.base :refer [view review]]
-            [concrete-optics.test-helpers :refer [typed-eq]]))
+            [concrete-optics.algebra.equality :refer [typed-eq]]))
 
 (defn view-review-axiom 
   [optic x & [comparison-function]]

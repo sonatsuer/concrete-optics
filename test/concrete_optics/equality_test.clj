@@ -1,6 +1,6 @@
-(ns concrete-optics.test-helpers-test
+(ns concrete-optics.equality-test
   (:require [clojure.test :refer [deftest testing is]] 
-            [concrete-optics.test-helpers :refer :all]))
+            [concrete-optics.algebra.equality :refer [typed-eq compare-functions]]))
 
 (deftest typed-eq-positive-test
   (testing "typed-eq empty"

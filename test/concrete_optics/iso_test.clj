@@ -2,7 +2,7 @@
   (:require [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
-            [concrete-optics.test-helpers :refer [typed-eq compare-functions]]
+            [concrete-optics.algebra.equality :refer [typed-eq compare-functions]]
             [concrete-optics.iso.structures :refer :all]
             [concrete-optics.iso.axioms :refer :all]))
 
@@ -24,7 +24,7 @@
 
 (defspec curried-review-view-axiom-test 1
   (let [f (fn [x] (fn [y] {:x x :y y}))
-        sample-size 1
+        sample-size 500
         generator (gen/vector gen/any-equatable sample-size)]
     (prop/for-all [fs (gen/fmap (fn [vec] (into [] (map f vec))) generator)
                    xs generator]

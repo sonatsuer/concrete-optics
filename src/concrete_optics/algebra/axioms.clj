@@ -1,5 +1,5 @@
 (ns concrete-optics.algebra.axioms
-  (:require [concrete-optics.test-helpers :refer [typed-eq]]))
+  (:require [concrete-optics.algebra.equality :refer [typed-eq]]))
 
 ;; Semigroup and monoid axioms
 (defn associativity-axiom

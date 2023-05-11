@@ -1,4 +1,4 @@
-(ns concrete-optics.test-helpers)
+(ns concrete-optics.algebra.equality)
 
 (defn- typed-eq-binary
   "Binary typed equality, overrides truthiness with actual
@@ -27,6 +27,6 @@
   ([base-comparison initia-samples & remaining-samples]
    (fn [f g]
      (let [samples (concat (list initia-samples) remaining-samples)]
-       (apply all-true (map base-comparison 
-                            (apply map f samples) 
+       (apply all-true (map base-comparison
+                            (apply map f samples)
                             (apply map g samples)))))))
