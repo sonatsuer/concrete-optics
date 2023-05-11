@@ -6,30 +6,30 @@
 
 (defn- left?
   [x]
-  (= (keys x) '(:left)))
+  (and (map? x)(= (keys x) '(:left))))
 
 (defn mk-prism
   "match : s -> Either t a, rev : b -> t"
   [match rev]
   {:to-list (fn [s]
               (let [matched (match s)]
-                (if (left? matched) [] [(:right matched)])))
+                (if (left? matched) [] [matched])))
    :review rev
    :over (fn [a-to-b]
            (fn [s]
              (let [matched (match s)]
-               (if (left? matched) (:left matched) (a-to-b (:right matched))))))
+               (if (left? matched) (:left matched) (a-to-b matched)))))
    :traverse (fn [app_f a-to-fb]
                (fn [s]
                  (let [matched (match s)]
-                   (if (left? matched) ((:unit app_f) (:left matched)) ((:fmap app_f) rev (a-to-fb (:right matched)))))))})
+                   (if (left? matched) ((:unit app_f) (:left matched)) ((:fmap app_f) rev (a-to-fb matched))))))})
 
 (defn mk-simple-prism
   "preview s -> Maybe a, rev : a -> s"
   [prev rev]
   (mk-prism (fn [s]
               (let [previewed (prev s)]
-                (if (nothing? previewed) {:left s} {:right previewed})))
+                (if (nothing? previewed) {:left s} previewed)))
             rev))
 
 (defn
