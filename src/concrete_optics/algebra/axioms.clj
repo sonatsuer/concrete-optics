@@ -1,33 +1,39 @@
 (ns concrete-optics.algebra.axioms
-  (:require [concrete-optics.common :refer [typed-eq]]))
+  (:require [concrete-optics.test-helpers :refer [typed-eq]]))
 
 ;; Semigroup and monoid axioms
 (defn associativity-axiom
   "Checks the associativity axiom of the given semigroup. Meant to be used in tests."
-  [semigroup x y z]
-  (let [op (.binary-op semigroup)] (typed-eq (op x (op y z)) (op (op x y) z))))
+  [semigroup x y z & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)
+        op (.binary-op semigroup)]
+    (equiv (op x (op y z)) (op (op x y) z))))
 
 (defn left-unit-axiom
   "Checks the left unit axiom of the given monoid. Meant to be used in tests."
-  [monoid x]
-  (typed-eq x ((.binary-op monoid) (.unit monoid) x)))
+  [monoid x & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv x ((.binary-op monoid) (.unit monoid) x))))
 
 (defn right-unit-axiom
   "Checks the right unit axiom of the given monoid. Meant to be used in tests."
-  [monoid x]
-  (typed-eq x ((.binary-op monoid) x (.unit monoid))))
+  [monoid x & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv x ((.binary-op monoid) x (.unit monoid)))))
 
 ;; Applicative axioms
 (defn id-functor-axiom
   "Checks the identity axiom for fmap of a given applicative. Meant to be used in tests."
-  [applicative x]
-  (typed-eq x ((.fmap applicative) identity x)))
+  [applicative x & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv x ((.fmap applicative) identity x))))
 
 (defn compose-functor-axiom
   "Checks the composition axiom for fmap of a given applicative. Meant to be used in tests."
-  [applicative f g x]
-  (let [fmap (.fmap applicative)]
-    (typed-eq (fmap f (fmap g x)) (fmap (comp f g) x))))
+  [applicative f g x & [comparison-function]]
+  (let [fmap (.fmap applicative)
+        equiv (or comparison-function typed-eq)]
+    (equiv (fmap f (fmap g x)) (fmap (comp f g) x))))
 
 (defn lifted-associativity-axiom
   "Checks the lifted assocaitivity axiom. Meant to be used in tests."

@@ -67,7 +67,4 @@
     (into {} (filter (comp some? val) candidates))))
 
 (defn optic-compose
-  ([] eq)
-  ([optic] optic)
-  ([optic & rest] (optic-compose-binary optic (reduce optic-compose-binary eq rest))))
-
+  ([& optics] (reduce optic-compose-binary eq optics)))

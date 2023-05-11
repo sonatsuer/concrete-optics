@@ -1,6 +1,6 @@
 (ns concrete-optics.showcase
   (:require [clojure.test :refer [deftest testing is]]
-            [concrete-optics.common :refer [typed-eq]]
+            [concrete-optics.test-helpers :refer [typed-eq]]
             [concrete-optics.core :as opt]
             [concrete-optics.algebra.structures :as alg]))
 

@@ -19,3 +19,8 @@
 
 (def eq
   (mk-iso identity identity))
+
+(def curried 
+  (let [curry (fn [f] (fn [x] (fn [y] (f x y))))
+        uncurry (fn [f] (fn [x y] ((f x) y)))]
+    (mk-iso curry uncurry)))
