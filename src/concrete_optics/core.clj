@@ -16,7 +16,7 @@
 (def to-list base/to-list)
 (def review base/review)
 (def traverse base/traverse)
-(def optic-compose base/optic-compose)
+(def compose base/compose)
 
 ;; Reexports from iso 
 (def mk-iso iso/mk-iso)

@@ -13,9 +13,9 @@
 
 (defn invert-iso 
   [optic]
-  ((if (= :iso (classify optic))
+  (if (= :iso (classify optic))
      (mk-iso (:review optic) (:view optic))
-     (throw (Exception. "Only isomorphisms can be inverted.")))))
+     (throw (Exception. "Only isomorphisms can be inverted."))))
 
 (def eq
   (mk-iso identity identity))

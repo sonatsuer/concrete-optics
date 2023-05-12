@@ -55,7 +55,7 @@
   [f g]
   (fn [a] (g (f a))))
 
-(defn- optic-compose-binary
+(defn- compose-binary
   [optic1 optic2]
   (let
    [compose-capability (fn [field-name binary-op] (apply-binary-nonnil binary-op (field-name optic1) (field-name optic2)))
@@ -66,5 +66,5 @@
                 :traverse (compose-capability :traverse comp)}]
     (into {} (filter (comp some? val) candidates))))
 
-(defn optic-compose
-  ([& optics] (reduce optic-compose-binary eq optics)))
+(defn compose
+  ([& optics] (reduce compose-binary eq optics)))

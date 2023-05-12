@@ -1,8 +1,12 @@
 (ns concrete-optics.showcase
   (:require [clojure.test :refer [deftest testing is]]
+            [clojure.test.check.clojure-test :refer [defspec]] 
+            [clojure.test.check.generators :as gen]
+            [clojure.test.check.properties :as prop]
             [concrete-optics.algebra.equality :refer [typed-eq]]
             [concrete-optics.core :as opt]
-            [concrete-optics.algebra.structures :as alg]))
+            [concrete-optics.algebra.structures :as alg]
+            [concrete-optics.iso.axioms :refer [view-review-axiom review-view-axiom]]))
 
 ;; This test file also serves as documentation.
 
@@ -10,7 +14,102 @@
 ;; ------------
 
 ;; Isomorphisms allow us to change the representation of data
-;; without loosing infromation.
+;; without loosing infromation. Here is a simple example.
+
+(def celcius<->fahrenheit 
+  (let [celsius->fahrenheit (fn [c] {:fahrenheit (+ 32 (* (:celsius c) (/ 9 5)))})
+        fahrenheit->celsius (fn [f] {:celsius (/ (- (:fahrenheit f) 32) (/ 9 5))})]
+    (opt/mk-iso celsius->fahrenheit fahrenheit->celsius)))
+
+;; It is a good idea to check that a custom constucted by one of the
+;; `mk-<optic>` functions is lawful. The axiom modules provide 
+;; the necessary functions. See also the test modules for more
+;; examples. One subtle issue is choosing the right notion of 
+;; equality. See the tests for the `curried` iso for an interesting case.
+
+(defspec celcius<->fahrenheit-view-review-test 100
+  (prop/for-all [x (gen/fmap (fn [t] {:celsius t}) gen/ratio)]
+                (view-review-axiom celcius<->fahrenheit x)))
+
+(defspec celcius<->fahrenheit-review-view-test 100
+  (prop/for-all [x (gen/fmap (fn [t] {:fahrenheit t}) gen/ratio)]
+                (review-view-axiom celcius<->fahrenheit x)))
+
+;; Consider this function defined with Celsius in mind. We wrap it
+;; as a getter so that we can compose it with other optics bu we could
+;; just use the 
+
+(defn celsius-freezing?
+  [c]
+  (< (:celsius c) 0))
+
+;; By using `celcius<->fahrenheit` we can use this function
+;; on Fharenheit values.
+
+(deftest celsius-freezing-test
+  (testing "celsius freezing"
+    (is (celsius-freezing? {:celsius -10})))
+  (testing "celsius not freezing"
+    (is (not (celsius-freezing? {:celsius 23})))) 
+  (testing "fahreheit freezing"
+      (is (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 30 }))))
+  (testing "fahrenheit not freezing"
+      (is (not (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 35}))))))
+
+;; At this point it is not very exciting because what we did
+;; was just wrapping and unwrapping the function which converts
+;; Fahrenheit to Celsius. Here is a more interesting example.
+
+(defn increase-fahrenheit
+  [diff]
+  (fn [f] {:fahrenheit (+ (:fahrenheit f) diff)}))
+
+(deftest increase-fahrenheit-test
+  (testing "increase fahrenheit"
+    (is (= ((increase-fahrenheit 1) {:fahrenheit 1}) 
+           {:fahrenheit 2})))
+  (testing "increase celsius"
+    (is (= (opt/over celcius<->fahrenheit (increase-fahrenheit (/ 9 5)) {:celsius 1})
+           {:celsius 2}))))
+
+;; Note that we manipulated a Celsius value as if it was 
+;; in Fahrenheit. We can also do it in the other direction
+;; by inverting te iso
+
+(defn increase-celsius
+  [diff]
+  (fn [f] {:celsius (+ (:celsius f) diff)}))
+
+(deftest increase-celsius-test
+  (testing "increase celsius"
+    (is (= ((increase-celsius 1) {:celsius 1})
+           {:celsius 2})))
+  (testing "increase fahrenheit"
+    (is (= (opt/over (opt/invert-iso celcius<->fahrenheit) (increase-celsius (/ 5 9)) {:fahrenheit 1})
+           {:fahrenheit 2}))))
+
+;; It is also possible to work with more than two representations.
+;; as an example, consider Kelvin.
+
+(def celsisus<->kelvin
+  (let [celsius->kelvin (fn [c] {:kelvin (+ (:celsius c) 273)})
+        kelvin->celsius (fn [k] {:celsius (- (:kelvin k) 273)})]
+    (opt/mk-iso celsius->kelvin kelvin->celsius)))
+
+(defspec celcius<->kelvin-view-review-test 100
+  (prop/for-all [x (gen/fmap (fn [t] {:celsius t}) gen/ratio)]
+                (view-review-axiom celsisus<->kelvin x)))
+
+(defspec celcius<->kelvin-review-view-test 100
+  (prop/for-all [x (gen/fmap (fn [t] {:kelvin t}) gen/ratio)]
+                (review-view-axiom celsisus<->kelvin x)))
+
+(deftest mixed-iso-test
+  (testing "inversion and composition"
+    (is (= (opt/over (opt/compose (opt/invert-iso celsisus<->kelvin) celcius<->fahrenheit) 
+                     (increase-fahrenheit (/ 9 5))
+                     {:kelvin 1})
+           {:kelvin 2}))))
 
 ;; Lenses
 ;; Nested data, composition with iso, weight record
@@ -34,9 +133,9 @@
 
 (deftest vector-length-test
   (testing "vector-length indeed computes the length"
-    (is (typed-eq (vector-length [1 2 3 4 5]) 5)))
+    (is (= (vector-length [1 2 3 4 5]) 5)))
   (testing "testing for empty vector"
-    (is (typed-eq (vector-length []) 0))))
+    (is (= (vector-length []) 0))))
 
 ;; In combination with other optics, traverse can do more interesting things
 ;; like accessing or modifying groups of nested data.
@@ -45,7 +144,7 @@
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
-  (opt/optic-compose opt/vector-traversal 
+  (opt/compose opt/vector-traversal 
                      (opt/ix :a) 
                      (opt/predicate-prism "positive" #(> % 0))))
 
@@ -124,5 +223,5 @@
     (is (typed-eq (count-errors-validation some-nonnegative-numbers)
            [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
-;; Setters, Getters and Folds
+;; Getters, Setters and Folds
 ;; mapped, getter as a convenience
