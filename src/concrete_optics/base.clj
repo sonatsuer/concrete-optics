@@ -13,7 +13,7 @@
   "Replaces the element in the whole by the new focus. Traditionally
    calles set but it clasehs witht the data structure set."
   [optic focus whole]
-  ((get-capability :over optic) (constantly focus)) whole)
+  (((get-capability :over optic) (constantly focus)) whole))
 
 (defn view 
   "Given an optic and a whole, returns the focus."

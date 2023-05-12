@@ -1,15 +1,22 @@
-(ns concrete-optics.lens.axioms)
+(ns concrete-optics.lens.axioms
+  (:require [concrete-optics.lens.structures :refer :all]
+            [concrete-optics.core :refer [put view]]
+            [concrete-optics.algebra.equality :refer [typed-eq]]))
 
-(defn mk-lens
-  "Constructs a lens from a getter and a putter (or setter)"
-  [get put]
-  {:view get
-   :over (fn [a-to-b] (fn [s] (put (a-to-b (get s)) s)))
-   :to-list (fn [s] [get s])
-   :traverse (fn [app_f a-to-fb] (fn [s] ((:binary-lift app_f) put (a-to-fb (get s)) ((:unit app_f) s))))})
+(defn get-put-axiom
+  [optic whole part & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv part 
+           (->> whole (put optic part) (view optic)))))
 
-(defn field
-  "This captures the get and set properties provided by the language as a lens.
-   Assumes that the fields already exist."
-  [ks]
-  (mk-lens (fn [m] (get-in m ks)) (fn [b m] (assoc-in m ks b))))
+(defn put-get-axiom
+  [optic whole & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv whole
+           (put optic (view optic whole) whole))))
+
+(defn put-put-axiom 
+  [optic whole part_1 part_2 & [comparison-function]]
+  (let [equiv (or comparison-function typed-eq)]
+    (equiv (put optic part_2 whole)
+           (->> whole (put optic part_1) (put optic part_2)))))
