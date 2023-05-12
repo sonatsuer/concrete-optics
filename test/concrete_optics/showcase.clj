@@ -112,10 +112,70 @@
            {:kelvin 2}))))
 
 ;; Lenses
-;; Nested data, composition with iso, weight record
+;; ------
+
+;; Lenses are a generalization of fieled accessors/modifiers. Consider
+;; the following piece of data.
+
+(def weather-data
+  {:temperature {:celsius 23}
+   :date "2017-06-09T06:59:40.829-00:00"
+   :location {:latitude 51.340199
+              :longitude 12.360103}})
+
+;; TODO
+
+;; As one can see, lenses do not buy as anything in this case.However,
+;; we can build 'virtual fields' by composing them with other fields.
+;; This is a general phenomenon: optics in isolation are often mundane,
+;; they really shine when used 
+
+;; TODO 
+
+;; There are other ways of creating virtual fields. Consider the
+;; following piece of data 
+
+(def net-tare-weight
+  {:net 100 :tare 15})
+
+(def net-tare<->gross-tare
+  (let [net-tare->gross-tare ""
+        gross-tare->net-tare ""]
+    opt/mk-iso ))
+
+;; Now we can manipulate the virtual field `:gross` by composing
+;; the `net-tare<->gross-tare` by the `gross-field` lens.
+
+;; TODO
+
+;; One can also inline the definitions and create the virtual
+;; gross field directly.
+
+;; TODO
+
+;; Again it is good practise to test it as it is manually defined.
+
+;; TODO (lens)
+;; TODO (comparison)
 
 ;; Prisms
-;; Filtering, decomposing
+;; ------
+
+;; Prisms are a way to implement pattern matching. 
+
+;; TODO
+
+;; One can even use a predicate as a pattern.
+
+;; TODO
+
+;; Composition predicate prisms correspond to conjunction.
+
+;; TODO 
+
+;; On its own this again looks somewhat boring. For more
+;; interesting examples look at the `each-positive-a` tarversal
+;; from the next section.
 
 ;; Traversals
 ;; ----------
@@ -140,7 +200,7 @@
 ;; In combination with other optics, traverse can do more interesting things
 ;; like accessing or modifying groups of nested data.
 
-(def some-data
+(def nested-data
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
@@ -150,12 +210,12 @@
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"
-    (is (typed-eq (opt/to-list each-positive-a some-data)
+    (is (typed-eq (opt/to-list each-positive-a nested-data)
            [1 7]))))
 
 (deftest modify-positive-as-test
   (testing "modifying only the values fitting a filtering condition"
-    (is (typed-eq (opt/over each-positive-a inc some-data)
+    (is (typed-eq (opt/over each-positive-a inc nested-data)
            [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
 
 ;; There are a lot of useful applicative structures that can be used with
@@ -223,5 +283,4 @@
     (is (typed-eq (count-errors-validation some-nonnegative-numbers)
            [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
-;; Getters, Setters and Folds
-;; mapped, getter as a convenience
+

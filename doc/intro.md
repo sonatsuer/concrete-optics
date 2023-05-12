@@ -5,7 +5,7 @@ Optics are general and composable constructions that allow bidirectional access 
 Here is an example of an optic --a traversal to be more precise-- which focuses on positive elements with key `:a` inside a map inside a vector.
 
 ```clojure
-(def some-data
+(def nested-data
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
@@ -13,12 +13,12 @@ Here is an example of an optic --a traversal to be more precise-- which focuses 
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"
-    (is (= (opt/to-list each-positive-a some-data)
+    (is (= (opt/to-list each-positive-a nested-data)
            [1 7]))))
 
 (deftest modify-positive-as-test
   (testing "modifying only the values fitting a filtering condition"
-    (is (= (opt/over each-positive-a inc some-data)
+    (is (= (opt/over each-positive-a inc nested-data)
            [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
 ```
 
@@ -43,8 +43,13 @@ Here is a table which classifies optics in terms of their capabilities.
 | lens          |   ✓   |    ✓   |        |  ✓   |    ✓     |
 | prism         |       |    ✓   |   ✓    |  ✓   |    ✓     |
 | traversal     |       |    ✓   |        |  ✓   |    ✓     |
-| setter        |       |        |        |  ✓   |          |
-| getter        |   ✓   |    ✓   |        |      |          |
-| fold          |       |    ✓   |        |      |          |
 
-When we compose two optics, we compose their capabilities. If a capability is not a common capability of the optics then it is lost. For instance composition of two optics of the same kind is another of the same kind. An optic and its composition of an optic with an isomorphism are of the same kind since isomorphisms have all the capabilities. But the composition of a prism and a lens is a traversal.
+When we compose two optics, we compose their corresponding capabilities. If a capability is not a common capability of the optics then it is lost. For instance composition of two optics of the same kind is another of the same kind. An optic and its composition with an isomorphism are of the same kind since isomorphisms have all the capabilities. But the composition of a prism and a lens is a traversal.
+
+## What is Missing
+
+This framework can easily support the optics `getter` (which has `view` and `to-list`), `setter` (which has `over`) and `fold` (which has `to-list`). I omitted them since they are not as useful.
+
+There is a general notion duality in optics where you change the roles of the whole and the piece. For instance the function `invert-iso` is an implementation of this idea. However, in this capability only formalism, it is not possible to invert, say, a prism twice and get the original prism. The system can certainly be expanded to support this, though.
+
+Exotic optics like grates or achromatic lenses are not implemented because, well, they are exotic and implementing them  would require a change in the current design which is dead simple.

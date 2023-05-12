@@ -5,14 +5,11 @@
    looking at the capabilities it posseses."
   [optic]
   (case (set (keys optic))
-    #{:to-list} :fold
-    #{:over} :setter
-    #{:view :to-list} :getter
-    #{:to-list :over :traverse} :traverse-of
+    #{:to-list :over :traverse} :traverse
     #{:view :to-list :over :traverse} :lens
     #{:to-list :review :over :traverse} :prism
     #{:view :to-list :review :over :traverse} :iso
-    :unknown))
+    :not-supported))
 
 (def capability-set
   #{:view :to-list :review :over :traverse})

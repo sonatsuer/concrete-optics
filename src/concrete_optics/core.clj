@@ -3,10 +3,7 @@
             [concrete-optics.iso.structures :as iso]
             [concrete-optics.prism.structures :as prism]
             [concrete-optics.lens.structures :as lens]
-            [concrete-optics.traversal.structures :as traversal]
-            [concrete-optics.getter.structures :as getter]
-            [concrete-optics.setter.structures :as setter]
-            [concrete-optics.fold.structures :as fold]))
+            [concrete-optics.traversal.structures :as traversal]))
 
 ;; Reexports from core
 (def preview base/preview)
@@ -36,12 +33,3 @@
 (def mk-traversal traversal/mk-traversal)
 (def vector-traversal traversal/vector-traversal)
 (def ix traversal/ix)
-
-;; Reexports from getter
-(def mk-getter getter/mk-getter)
-
-;; Reexports from setter
-(def mk-setter setter/mk-setter)
-
-;; Reexports from fold
-(def mk-fold fold/mk-fold)
