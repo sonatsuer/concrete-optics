@@ -1,10 +1,10 @@
 (ns concrete-optics.prism.structures)
 
-(defn- nothing?
+(defn nothing?
   [x]
   (= x :nothing))
 
-(defn- left?
+(defn left?
   [x]
   (and (map? x)(= (keys x) '(:left))))
 
@@ -39,3 +39,8 @@
     (mk-simple-prism
      (fn [x] (if (predicate x) x :nothing))
      (fn [x] (if (predicate x) x (throw (Exception. (str x " vioates the predicate " msg))))))))
+
+(def cons-prism
+  (mk-simple-prism
+   (fn [vec] (if (empty? vec) :nothing {:head (first vec) :tail (into [] (rest vec))}))
+   (fn [decomposition] (into [] (concat [(:head decomposition)] (:tail decomposition))))))
