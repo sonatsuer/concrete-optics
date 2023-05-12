@@ -1,6 +1,5 @@
 (ns concrete-optics.lens.axioms
-  (:require [concrete-optics.lens.structures :refer :all]
-            [concrete-optics.core :refer [put view]]
+  (:require [concrete-optics.core :refer [put view]]
             [concrete-optics.algebra.equality :refer [typed-eq]]))
 
 (defn get-put-axiom

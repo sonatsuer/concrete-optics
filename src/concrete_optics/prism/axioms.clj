@@ -1,5 +1,5 @@
 (ns concrete-optics.prism.axioms 
-  (:require [concrete-optics.prism.structures :refer :all]
+  (:require [concrete-optics.prism.structures :refer [nothing?]]
             [concrete-optics.core :refer [review preview]]
             [concrete-optics.algebra.equality :refer [typed-eq]]))
 
