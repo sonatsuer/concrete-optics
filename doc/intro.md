@@ -9,7 +9,7 @@ Here is an example of an optic --a traversal to be more precise-- which focuses 
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
-  (opt/compose opt/vector-traversal (opt/ix :a) (opt/predicate-prism "positive" #(> % 0))))
+  (opt/compose opt/vector-traversal (opt/ix :a) (opt/predicate-prism #(> % 0))))
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"

@@ -34,7 +34,8 @@
 
 (defn
   predicate-prism
-  [name p]
-  (mk-simple-prism
-   (fn [x] (if (p x) x :nothing))
-   (fn [x] (if (p x) x (throw (Exception. (str x " vioates the predicate '" name "'")))))))
+  [predicate & [name]]
+  (let [msg (or name "")]
+    (mk-simple-prism
+     (fn [x] (if (predicate x) x :nothing))
+     (fn [x] (if (predicate x) x (throw (Exception. (str x " vioates the predicate " msg))))))))

@@ -206,7 +206,7 @@
 (def each-positive-a
   (opt/compose opt/vector-traversal 
                      (opt/ix :a) 
-                     (opt/predicate-prism "positive" #(> % 0))))
+                     (opt/predicate-prism #(> % 0))))
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"
