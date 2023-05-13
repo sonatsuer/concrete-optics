@@ -1,5 +1,5 @@
 (ns concrete-optics.equality-test
-  (:require [clojure.test :refer [deftest testing is]] 
+  (:require [clojure.test :refer [deftest testing is]]
             [concrete-optics.algebra.equality :refer [typed-eq compare-functions]]))
 
 (deftest typed-eq-positive-test
@@ -16,13 +16,13 @@
   (testing "list versus vector"
     (is (not (typed-eq [1 2] [1 2] '(1 2) [1 2])))))
 
-(deftest compare-functions-positive-test 
+(deftest compare-functions-positive-test
   (testing "#(+ % %) vs (* 2 %)"
     (is ((compare-functions typed-eq [1 2 3 4 5 6 7 8 9 10]) #(+ % %) #(* 2 %))))
   (testing "(+ % %) vs (* 2.0 %)"
     (is ((compare-functions == [1 2 3 4 5 6 7 8 9 10]) #(+ % %) #(* 2.0 %)))))
 
-(defn- dirac 
+(defn- dirac
   [x]
   (fn [y] (if (= x y) 1 0)))
 

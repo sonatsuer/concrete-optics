@@ -27,6 +27,6 @@
                  tail (gen/vector gen/any-equatable)]
                 (review-preview-axiom cons-prism {:head head :tail tail})))
 
-(defspec cons-prism-preview-review-test 100 
+(defspec cons-prism-preview-review-test 100
   (prop/for-all [vec (gen/vector gen/any-equatable)]
                 (preview-review-axiom cons-prism vec)))

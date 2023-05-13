@@ -1,4 +1,4 @@
-(ns concrete-optics.prism.axioms 
+(ns concrete-optics.prism.axioms
   (:require [concrete-optics.prism.structures :refer [nothing?]]
             [concrete-optics.core :refer [review preview]]
             [concrete-optics.algebra.equality :refer [typed-eq]]))
@@ -6,10 +6,10 @@
 (defn review-preview-axiom
   [optic part & [comparison-function]]
   (let [equiv (or comparison-function typed-eq)]
-    (equiv part 
+    (equiv part
            (->> part (review optic) (preview optic)))))
 
-(defn preview-review-axiom 
+(defn preview-review-axiom
   [optic whole & [comparison-function]]
   (let [equiv (or comparison-function typed-eq)
         previewed (preview optic whole)]

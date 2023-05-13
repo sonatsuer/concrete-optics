@@ -1,6 +1,6 @@
 (ns concrete-optics.showcase
   (:require [clojure.test :refer [deftest testing is]]
-            [clojure.test.check.clojure-test :refer [defspec]] 
+            [clojure.test.check.clojure-test :refer [defspec]]
             [clojure.test.check.generators :as gen]
             [clojure.test.check.properties :as prop]
             [concrete-optics.algebra.equality :refer [typed-eq]]
@@ -17,7 +17,7 @@
 ;; Isomorphisms allow us to change the representation of data
 ;; without loosing infromation. Here is a simple example.
 
-(def celcius<->fahrenheit 
+(def celcius<->fahrenheit
   (let [celsius->fahrenheit (fn [c] {:fahrenheit (+ 32 (* (:celsius c) (/ 9 5)))})
         fahrenheit->celsius (fn [f] {:celsius (/ (- (:fahrenheit f) 32) (/ 9 5))})]
     (opt/mk-iso celsius->fahrenheit fahrenheit->celsius)))
@@ -49,11 +49,11 @@
   (testing "celsius freezing"
     (is (celsius-freezing? {:celsius -10})))
   (testing "celsius not freezing"
-    (is (not (celsius-freezing? {:celsius 23})))) 
+    (is (not (celsius-freezing? {:celsius 23}))))
   (testing "fahreheit freezing"
-      (is (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 30 }))))
+    (is (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 30}))))
   (testing "fahrenheit not freezing"
-      (is (not (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 35}))))))
+    (is (not (celsius-freezing? (opt/review celcius<->fahrenheit {:fahrenheit 35}))))))
 
 ;; At this point it is not very exciting because what we did
 ;; was just wrapping and unwrapping the function which converts
@@ -65,7 +65,7 @@
 
 (deftest increase-fahrenheit-test
   (testing "increase fahrenheit"
-    (is (= ((increase-fahrenheit 1) {:fahrenheit 1}) 
+    (is (= ((increase-fahrenheit 1) {:fahrenheit 1})
            {:fahrenheit 2})))
   (testing "increase celsius"
     (is (= (opt/over celcius<->fahrenheit (increase-fahrenheit (/ 9 5)) {:celsius 1})
@@ -107,7 +107,7 @@
                 (review-view-axiom celsisus<->kelvin x)))
 
 (def kelvin<->fahrenheit
-  (opt/compose (opt/invert-iso celsisus<->kelvin) celcius<->fahrenheit ))
+  (opt/compose (opt/invert-iso celsisus<->kelvin) celcius<->fahrenheit))
 
 (deftest mixed-iso-test
   (testing "inversion and composition"
@@ -120,7 +120,7 @@
 ;; Lenses are a generalization of fieled accessors/modifiers. Consider
 ;; the following example.
 
-(def location 
+(def location
   {:latitude 51.340199
    :longitude 12.360103})
 
@@ -129,7 +129,7 @@
    :date "2017-06-09"
    :location location})
 
-(def weater-latitude-lens 
+(def weater-latitude-lens
   (opt/field [:location :latitude]))
 
 (deftest lens-compariosn
@@ -148,12 +148,12 @@
 (def weather-fahrenheit-lens
   (opt/compose (opt/field [:temperature]) celcius<->fahrenheit))
 
-(deftest virtual-fahrenheit-test 
-  (testing "get value from virtual field" 
-    (is (= (opt/view weather-fahrenheit-lens weather-data) 
-           {:fahrenheit 32}))) 
-  (testing "manipulate value in virtual field" 
-    (is (= (opt/over weather-fahrenheit-lens (increase-fahrenheit (/ 9 5)) weather-data) 
+(deftest virtual-fahrenheit-test
+  (testing "get value from virtual field"
+    (is (= (opt/view weather-fahrenheit-lens weather-data)
+           {:fahrenheit 32})))
+  (testing "manipulate value in virtual field"
+    (is (= (opt/over weather-fahrenheit-lens (increase-fahrenheit (/ 9 5)) weather-data)
            {:temperature {:celsius 1} :date "2017-06-09" :location location})))
   (testing "put new value in the virtual field"
     (is (= (opt/put weather-fahrenheit-lens {:fahrenheit 212} weather-data)
@@ -179,13 +179,13 @@
 (deftest virtual-gross-field-test
   (testing "get value from virtual field"
     (is (= (opt/view virtual-gross-field net-tare-weight)
-            115))) 
-  (testing "manipulate value in virtual field" 
+           115)))
+  (testing "manipulate value in virtual field"
     (is (= (opt/over virtual-gross-field #(+ % 10) net-tare-weight)
-            {:net 110 :tare 15})))
+           {:net 110 :tare 15})))
   (testing "put new value in the virtual field"
     (is (= (opt/put virtual-gross-field 80 net-tare-weight)
-           {:net 65 :tare 15})))) 
+           {:net 65 :tare 15}))))
 
 ;; One can also inline the definitions and create the virtual
 ;; gross field by inlining the action of the isomorphism.
@@ -196,7 +196,7 @@
 
 ;; Again it is good practise to test `field-put-put-axiom` as
 ;; it is manually defined.
-(def gen-weight 
+(def gen-weight
   (gen/let [tare gen/small-integer
             net gen/small-integer]
     {:net net :tare tare}))
@@ -210,7 +210,7 @@
 
 (defspec virtual-field-put-get-test 100
   (prop/for-all [weight gen-weight]
-                (put-get-axiom handmade-virtual-gross-field 
+                (put-get-axiom handmade-virtual-gross-field
                                weight)))
 
 (defspec virtual-field-put-put-axiom 100
@@ -265,9 +265,9 @@
 
 (defn vector-length
   [vec]
-  (opt/traverse opt/vector-traversal 
-                (alg/const-applicative alg/additive-monoid) 
-                (constantly 1) 
+  (opt/traverse opt/vector-traversal
+                (alg/const-applicative alg/additive-monoid)
+                (constantly 1)
                 vec))
 
 (deftest vector-length-test
@@ -283,19 +283,19 @@
   [{:a 1 :b 2} {:c 3} {:a -5} {:a 7 :z 22}])
 
 (def each-positive-a
-  (opt/compose opt/vector-traversal 
-                     (opt/ix :a) 
-                     (opt/predicate-prism #(> % 0))))
+  (opt/compose opt/vector-traversal
+               (opt/ix :a)
+               (opt/predicate-prism #(> % 0))))
 
 (deftest list-positive-as-test
   (testing "listing elements with a filtering condition"
     (is (typed-eq (opt/to-list each-positive-a nested-data)
-           [1 7]))))
+                  [1 7]))))
 
 (deftest modify-positive-as-test
   (testing "modifying only the values fitting a filtering condition"
     (is (typed-eq (opt/over each-positive-a inc nested-data)
-           [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
+                  [{:a 2, :b 2} {:c 3} {:a -5} {:a 8, :z 22}]))))
 
 ;; There are a lot of useful applicative structures that can be used with
 ;; `traverse`. Here are a few examples for validating data.
@@ -308,48 +308,48 @@
 
 (defn fancy-sqrt
   [x]
-  (if (< x 0) 
+  (if (< x 0)
     (alg/fail-with (str "Cannot take the square root of " x))
     (Math/sqrt x)))
 
 (defn fail-fast-validation
   [numbers]
-  (opt/traverse opt/vector-traversal 
-                alg/fail-fast-applicative 
-                fancy-sqrt 
+  (opt/traverse opt/vector-traversal
+                alg/fail-fast-applicative
+                fancy-sqrt
                 numbers))
 
 (deftest fail-fast-validation-test
   (testing "if there are errors, only the first one is kept"
-    (is (typed-eq (fail-fast-validation some-numbers) 
-           {:failure "Cannot take the square root of -4"})))
+    (is (typed-eq (fail-fast-validation some-numbers)
+                  {:failure "Cannot take the square root of -4"})))
   (testing "if there are no errors the result is returned"
-    (is (typed-eq (fail-fast-validation some-nonnegative-numbers) 
-           [1.0 4.0 5.0 3.0 1.0 2.0]))))
+    (is (typed-eq (fail-fast-validation some-nonnegative-numbers)
+                  [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
 (defn collect-errors-validation
   [numbers]
-  (opt/traverse opt/vector-traversal 
-                alg/collect-errors-applicative 
+  (opt/traverse opt/vector-traversal
+                alg/collect-errors-applicative
                 (alg/map-failure (fn [x] [x]) fancy-sqrt)
                 numbers))
 
 (deftest collect-errors-validation-test
   (testing "if there are errors, all of them are returned in a vector"
     (is (typed-eq (collect-errors-validation some-numbers)
-           {:failure ["Cannot take the square root of -4"
-                      "Cannot take the square root of -9"
-                      "Cannot take the square root of -3"]})))
+                  {:failure ["Cannot take the square root of -4"
+                             "Cannot take the square root of -9"
+                             "Cannot take the square root of -3"]})))
   (testing "if there are no errors the result is returned"
     (is (typed-eq (collect-errors-validation some-nonnegative-numbers)
-           [1.0 4.0 5.0 3.0 1.0 2.0]))))
+                  [1.0 4.0 5.0 3.0 1.0 2.0]))))
 
 ;; We can even cook up an applicative which, say, counts  errors or determines
 ;; the maximum severity of errors. Here is an implementation for error counting.
 ;; We leave the severity example as an exercise.
 (defn count-errors-validation
   [numbers]
-  (opt/traverse opt/vector-traversal 
+  (opt/traverse opt/vector-traversal
                 (alg/validation-applicative alg/additive-monoid)
                 (alg/map-failure (constantly 1) fancy-sqrt)
                 numbers))
@@ -357,9 +357,7 @@
 (deftest count-errors-validation-test
   (testing "if there are errors, the error count is returned"
     (is (typed-eq (count-errors-validation some-numbers)
-           {:failure 3})))
+                  {:failure 3})))
   (testing "if there are no errors the result is returned"
     (is (typed-eq (count-errors-validation some-nonnegative-numbers)
-           [1.0 4.0 5.0 3.0 1.0 2.0]))))
-
-
+                  [1.0 4.0 5.0 3.0 1.0 2.0]))))

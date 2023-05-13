@@ -1,5 +1,5 @@
 (ns concrete-optics.core
-  (:require [concrete-optics.base :as base] 
+  (:require [concrete-optics.base :as base]
             [concrete-optics.iso.structures :as iso]
             [concrete-optics.prism.structures :as prism]
             [concrete-optics.lens.structures :as lens]

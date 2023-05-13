@@ -15,10 +15,10 @@
 ;; A monoid is a semigroup with a unit element.
 (defrecord Monoid [binary-op unit])
 
-(def additive-monoid 
+(def additive-monoid
   (Monoid. (.binary-op additive-semigroup) 0))
 
-(def vector-monoid 
+(def vector-monoid
   (Monoid. (.binary-op vector-semigroup) []))
 
 (defn monoid->semigroup
@@ -60,17 +60,17 @@
    (fn [f x] (if (failure? x) x (f x)))
    identity
    (fn [binary-op]
-     (fn [x y] 
+     (fn [x y]
        (case [(failure? x) (failure? y)]
          [true true] (fail-with ((.binary-op semigroup) (:failure x) (:failure y)))
-         [true false] x 
-         [false true] y 
+         [true false] x
+         [false true] y
          [false false] (binary-op x y))))))
 
-(defn map-failure 
+(defn map-failure
   [to-new-failure f]
   (fn [x] (let [result (f x)]
-            (if (failure? result) 
+            (if (failure? result)
               (fail-with (to-new-failure (:failure result)))
               result))))
 

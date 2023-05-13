@@ -17,7 +17,7 @@
 (defn get-capability
   [capability optic]
   (if (contains? capability-set capability)
-    (let [candidate (capability optic)] 
+    (let [candidate (capability optic)]
       (if (nil? candidate)
         (throw (Exception. (str "The optic " (classify optic) " does not support " capability)))
         candidate))

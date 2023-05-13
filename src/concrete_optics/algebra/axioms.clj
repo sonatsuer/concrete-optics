@@ -44,18 +44,18 @@
                        (second left-associated)]])
         lifted-pair ((.binary-lift applicative) (fn [x y] [x y]))]
     (typed-eq ((.fmap applicative) associator (lifted-pair (lifted-pair fx fy) fz))
-       (lifted-pair fx (lifted-pair fy fz)))))
+              (lifted-pair fx (lifted-pair fy fz)))))
 
 (defn lifted-left-unit-axiom
   "Checks the lifted left identity axiom. Meant to be used in tests."
   [applicative fx]
   (let [lifted-pair ((.binary-lift applicative) (fn [x y] [x y]))]
     (typed-eq ((.fmap applicative) first (lifted-pair fx ((.unit applicative) :throw-away)))
-       fx)))
+              fx)))
 
 (defn lifted-right-unit-axiom
   "Checks the lifted right identity axiom. Meant to be used in tests."
   [applicative fx]
   (let [lifted-pair ((.binary-lift applicative) (fn [x y] [x y]))]
     (typed-eq ((.fmap applicative) second (lifted-pair ((.unit applicative) :throw-away) fx))
-       fx)))
+              fx)))

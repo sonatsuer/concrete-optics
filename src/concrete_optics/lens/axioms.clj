@@ -5,7 +5,7 @@
 (defn get-put-axiom
   [optic whole part & [comparison-function]]
   (let [equiv (or comparison-function typed-eq)]
-    (equiv part 
+    (equiv part
            (->> whole (put optic part) (view optic)))))
 
 (defn put-get-axiom
@@ -14,7 +14,7 @@
     (equiv whole
            (put optic (view optic whole) whole))))
 
-(defn put-put-axiom 
+(defn put-put-axiom
   [optic whole part_1 part_2 & [comparison-function]]
   (let [equiv (or comparison-function typed-eq)]
     (equiv (put optic part_2 whole)

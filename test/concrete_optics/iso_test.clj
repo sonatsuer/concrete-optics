@@ -14,7 +14,7 @@
   (prop/for-all [x gen/any-equatable]
                 (review-view-axiom eq x)))
 
-(defspec curried-view-review-test 1 
+(defspec curried-view-review-test 1
   (let [f (fn [x y] {:x x :y y})
         sample-size 500
         generator (gen/vector gen/any-equatable sample-size)]

@@ -11,16 +11,16 @@
    :review g
    :traverse (fn [app_f a-to-fb] (fn [s] ((:fmap app_f) g (a-to-fb (f s)))))})
 
-(defn invert-iso 
+(defn invert-iso
   [optic]
   (if (= :iso (classify optic))
-     (mk-iso (:review optic) (:view optic))
-     (throw (Exception. "Only isomorphisms can be inverted."))))
+    (mk-iso (:review optic) (:view optic))
+    (throw (Exception. "Only isomorphisms can be inverted."))))
 
 (def eq
   (mk-iso identity identity))
 
-(def curried 
+(def curried
   (let [curry (fn [f] (fn [x] (fn [y] (f x y))))
         uncurry (fn [f] (fn [x y] ((f x) y)))]
     (mk-iso curry uncurry)))

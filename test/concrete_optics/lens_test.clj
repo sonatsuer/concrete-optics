@@ -10,7 +10,7 @@
   (gen/let [keyword gen/keyword
             value gen/any-equatable
             dummy-map (gen/map gen/keyword gen/any-equatable)]
-    {:keyword keyword 
+    {:keyword keyword
      :map (assoc dummy-map keyword value)}))
 
 (defspec field-get-put-test 100
@@ -25,7 +25,7 @@
                 (put-get-axiom (field [(:keyword map-with-keyword)])
                                (:map map-with-keyword))))
 
-(defspec field-put-put-axiom 100 
+(defspec field-put-put-axiom 100
   (prop/for-all [map-with-keyword gen-map-with-keyword
                  part_1 gen/any-equatable
                  part_2 gen/any-equatable]

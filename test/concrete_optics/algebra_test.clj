@@ -7,15 +7,15 @@
 
 ;; First semigroup
 (defspec first-semigroup-assoc 100
-  (prop/for-all [x gen/small-integer 
-                 y gen/small-integer 
+  (prop/for-all [x gen/small-integer
+                 y gen/small-integer
                  z gen/small-integer]
                 (associativity-axiom first-semigroup x y z)))
 
 ;; Additive monoid
 (defspec additive-monoid-assoc 100
-  (prop/for-all [x gen/small-integer 
-                 y gen/small-integer 
+  (prop/for-all [x gen/small-integer
+                 y gen/small-integer
                  z gen/small-integer]
                 (associativity-axiom (monoid->semigroup additive-monoid) x y z)))
 
@@ -29,8 +29,8 @@
 
 ;; Vector monoid
 (defspec vector-monoid-assoc 100
-  (prop/for-all [x (gen/vector gen/any-equatable) 
-                 y (gen/vector gen/any-equatable) 
+  (prop/for-all [x (gen/vector gen/any-equatable)
+                 y (gen/vector gen/any-equatable)
                  z (gen/vector gen/any-equatable)]
                 (associativity-axiom (monoid->semigroup vector-monoid) x y z)))
 
@@ -50,7 +50,7 @@
     (compose-functor-axiom applicative f g x)))
 
 ;; Constant applicative (with vector monoid)
-(def const-vector-app 
+(def const-vector-app
   (const-applicative vector-monoid))
 
 (defspec const-applicative-id 100
@@ -84,7 +84,7 @@
   (prop/for-all [x gen/any-equatable]
                 (check-compose-with-wrapper-functions identity-applicative x)))
 
-(defspec identity-applicative-assoc 100 
+(defspec identity-applicative-assoc 100
   (prop/for-all [fx gen/any-equatable
                  fy gen/any-equatable
                  fz gen/any-equatable]
@@ -99,7 +99,7 @@
                 (lifted-right-unit-axiom identity-applicative fx)))
 
 ;; Fail-Fast applicative
-(def gen-fail-fast 
+(def gen-fail-fast
   (gen/one-of [(gen/fmap (fn [x] {:failure x}) gen/any-equatable) gen/any-equatable]))
 
 (defspec fail-fast-applicative-id 100
