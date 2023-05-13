@@ -26,7 +26,7 @@ Here is an example of an optic --a traversal to be more precise-- which focuses 
 
 ## Implementation Idea
 
-There is a very general definition of optics which relies on a nontrivial amount of mathematical background. We will not be working with that here. Instead, we will take a more *concrete* approach and work with certain capabilities an optic can have. Behind the curtains, each optic will be a map of capabilities.
+There is a very general [definition](https://ncatlab.org/nlab/show/optic+%28in+computer+science%29) of optics which relies on a nontrivial amount of mathematical background. We will not be working with that here. Instead, we will take a more *concrete* approach and work with certain capabilities an optic can have. Behind the curtains, each optic will be a map of capabilities.
 
 As a simple mental model, we can think of an optic connecting a *big* whole to a *small* part. Sometimes we say that the optic focuses on the small part. Here is a list of capabilities with their intuitive meanings:
 
