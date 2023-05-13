@@ -5,7 +5,7 @@
             [concrete-optics.lens.structures :as lens]
             [concrete-optics.traversal.structures :as traversal]))
 
-;; Reexports from core
+;; Reexports from base
 (def preview base/preview)
 (def put base/put)
 (def view base/view)
@@ -19,11 +19,13 @@
 (def mk-iso iso/mk-iso)
 (def invert-iso iso/invert-iso)
 (def eq iso/eq)
+(def curried iso/curried)
 
 ;; Reexports from prism
 (def mk-prism prism/mk-prism)
 (def mk-simple-prism prism/mk-simple-prism)
 (def predicate-prism prism/predicate-prism)
+(def cons-prism prism/cons-prism)
 
 ;; Reexports from lens
 (def mk-lens lens/mk-lens)

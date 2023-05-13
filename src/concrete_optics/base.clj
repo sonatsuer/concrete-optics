@@ -4,14 +4,14 @@
 
 ;; Capability combinators
 (defn preview
-  "Tries to focus on a sinlge element, produces :nothing if fails."
+  "Tries to focus on a sinlge element, produces `:nothing` if it fails."
   [optic whole]
   (let [lst ((get-capability :to-list optic) whole)]
     (if (empty? lst) :nothing (first lst))))
 
 (defn put
   "Replaces the element in the whole by the new focus. Traditionally
-   calles set but it clasehs witht the data structure set."
+   called set but it clashes with the data structure set."
   [optic focus whole]
   (((get-capability :over optic) (constantly focus)) whole))
 

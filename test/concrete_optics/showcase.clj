@@ -6,7 +6,8 @@
             [concrete-optics.algebra.equality :refer [typed-eq]]
             [concrete-optics.core :as opt]
             [concrete-optics.algebra.structures :as alg]
-            [concrete-optics.iso.axioms :refer [view-review-axiom review-view-axiom]]))
+            [concrete-optics.iso.axioms :refer [view-review-axiom review-view-axiom]]
+            [concrete-optics.lens.axioms :refer [get-put-axiom put-get-axiom put-put-axiom]]))
 
 ;; This test file also serves as documentation.
 
@@ -21,7 +22,7 @@
         fahrenheit->celsius (fn [f] {:celsius (/ (- (:fahrenheit f) 32) (/ 9 5))})]
     (opt/mk-iso celsius->fahrenheit fahrenheit->celsius)))
 
-;; It is a good idea to check that a custom constucted by one of the
+;; It is a good idea to check that a custom optic constructed by one of the
 ;; `mk-<optic>` functions is lawful. The axiom modules provide 
 ;; the necessary functions. See also the test modules for more
 ;; examples. One subtle issue is choosing the right notion of 
@@ -35,9 +36,7 @@
   (prop/for-all [x (gen/fmap (fn [t] {:fahrenheit t}) gen/ratio)]
                 (review-view-axiom celcius<->fahrenheit x)))
 
-;; Consider this function defined with Celsius in mind. We wrap it
-;; as a getter so that we can compose it with other optics bu we could
-;; just use the 
+;; Consider this function defined with Celsius in mind.
 
 (defn celsius-freezing?
   [c]
@@ -74,22 +73,25 @@
 
 ;; Note that we manipulated a Celsius value as if it was 
 ;; in Fahrenheit. We can also do it in the other direction
-;; by inverting te iso
+;; by inverting the isomorphism.
 
 (defn increase-celsius
   [diff]
   (fn [f] {:celsius (+ (:celsius f) diff)}))
+
+(def fahrenheit<->celsius
+  (opt/invert-iso celcius<->fahrenheit))
 
 (deftest increase-celsius-test
   (testing "increase celsius"
     (is (= ((increase-celsius 1) {:celsius 1})
            {:celsius 2})))
   (testing "increase fahrenheit"
-    (is (= (opt/over (opt/invert-iso celcius<->fahrenheit) (increase-celsius (/ 5 9)) {:fahrenheit 1})
+    (is (= (opt/over fahrenheit<->celsius (increase-celsius (/ 5 9)) {:fahrenheit 1})
            {:fahrenheit 2}))))
 
 ;; It is also possible to work with more than two representations.
-;; as an example, consider Kelvin.
+;; As an example, consider Kelvin.
 
 (def celsisus<->kelvin
   (let [celsius->kelvin (fn [c] {:kelvin (+ (:celsius c) 273)})
@@ -104,33 +106,58 @@
   (prop/for-all [x (gen/fmap (fn [t] {:kelvin t}) gen/ratio)]
                 (review-view-axiom celsisus<->kelvin x)))
 
+(def kelvin<->fahrenheit
+  (opt/compose (opt/invert-iso celsisus<->kelvin) celcius<->fahrenheit ))
+
 (deftest mixed-iso-test
   (testing "inversion and composition"
-    (is (= (opt/over (opt/compose (opt/invert-iso celsisus<->kelvin) celcius<->fahrenheit) 
-                     (increase-fahrenheit (/ 9 5))
-                     {:kelvin 1})
+    (is (= (opt/over kelvin<->fahrenheit (increase-fahrenheit (/ 9 5)) {:kelvin 1})
            {:kelvin 2}))))
 
 ;; Lenses
 ;; ------
 
 ;; Lenses are a generalization of fieled accessors/modifiers. Consider
-;; the following piece of data.
+;; the following example.
+
+(def location 
+  {:latitude 51.340199
+   :longitude 12.360103})
 
 (def weather-data
-  {:temperature {:celsius 23}
-   :date "2017-06-09T06:59:40.829-00:00"
-   :location {:latitude 51.340199
-              :longitude 12.360103}})
+  {:temperature {:celsius 0}
+   :date "2017-06-09"
+   :location location})
 
-;; TODO
+(def weater-latitude-lens 
+  (opt/field [:location :latitude]))
 
-;; As one can see, lenses do not buy as anything in this case.However,
-;; we can build 'virtual fields' by composing them with other fields.
-;; This is a general phenomenon: optics in isolation are often mundane,
-;; they really shine when used 
+(deftest lens-compariosn
+  (testing "lenses imitate field accessors"
+    (is (= (get-in weather-data [:location :latitude])
+           (opt/view weater-latitude-lens weather-data))))
+  (testing "lenses imitate field modifiers"
+    (is (= (assoc-in weather-data [:location :latitude] 0.0)
+           (opt/put weater-latitude-lens 0.0 weather-data)))))
 
-;; TODO 
+;; As one can see, lenses do not buy us anything in this case. However,
+;; we can build 'virtual fields' as lenses by composing them with
+;; isos. This is a general phenomenon: optics in isolation are often
+;; mundane, they really shine when used with other optics.
+
+(def weather-fahrenheit-lens
+  (opt/compose (opt/field [:temperature]) celcius<->fahrenheit))
+
+(deftest virtual-fahrenheit-test 
+  (testing "get value from virtual field" 
+    (is (= (opt/view weather-fahrenheit-lens weather-data) 
+           {:fahrenheit 32}))) 
+  (testing "manipulate value in virtual field" 
+    (is (= (opt/over weather-fahrenheit-lens (increase-fahrenheit (/ 9 5)) weather-data) 
+           {:temperature {:celsius 1} :date "2017-06-09" :location location})))
+  (testing "put new value in the virtual field"
+    (is (= (opt/put weather-fahrenheit-lens {:fahrenheit 212} weather-data)
+           {:temperature {:celsius 100} :date "2017-06-09" :location location}))))
 
 ;; There are other ways of creating virtual fields. Consider the
 ;; following piece of data 
@@ -139,29 +166,81 @@
   {:net 100 :tare 15})
 
 (def net-tare<->gross-tare
-  (let [net-tare->gross-tare ""
-        gross-tare->net-tare ""]
-    opt/mk-iso ))
+  (let [net-tare->gross-tare (fn [w] {:gross (+ (:net w) (:tare w)) :tare (:tare w)})
+        gross-tare->net-tare (fn [w] {:net (- (:gross w) (:tare w)) :tare (:tare w)})]
+    (opt/mk-iso net-tare->gross-tare gross-tare->net-tare)))
 
-;; Now we can manipulate the virtual field `:gross` by composing
-;; the `net-tare<->gross-tare` by the `gross-field` lens.
+;; Now we can manipulate the virtual field `gross` by composing
+;; `net-tare<->gross-tare` by the `gross-field` lens.
 
-;; TODO
+(def virtual-gross-field
+  (opt/compose net-tare<->gross-tare (opt/field [:gross])))
+
+(deftest virtual-gross-field-test
+  (testing "get value from virtual field"
+    (is (= (opt/view virtual-gross-field net-tare-weight)
+            115))) 
+  (testing "manipulate value in virtual field" 
+    (is (= (opt/over virtual-gross-field #(+ % 10) net-tare-weight)
+            {:net 110 :tare 15})))
+  (testing "put new value in the virtual field"
+    (is (= (opt/put virtual-gross-field 80 net-tare-weight)
+           {:net 65 :tare 15})))) 
 
 ;; One can also inline the definitions and create the virtual
-;; gross field directly.
+;; gross field by inlining the action of the isomorphism.
 
-;; TODO
+(def handmade-virtual-gross-field
+  (opt/mk-lens (fn [w] (+ (:net w) (:tare w)))
+               (fn [new-gross w] {:net (- new-gross (:tare w)) :tare (:tare w)})))
 
-;; Again it is good practise to test it as it is manually defined.
+;; Again it is good practise to test `field-put-put-axiom` as
+;; it is manually defined.
+(def gen-weight 
+  (gen/let [tare gen/small-integer
+            net gen/small-integer]
+    {:net net :tare tare}))
 
-;; TODO (lens)
-;; TODO (comparison)
+(defspec virtual-field-get-put-test 100
+  (prop/for-all [weight gen-weight
+                 gross gen/small-integer]
+                (get-put-axiom handmade-virtual-gross-field
+                               weight
+                               gross)))
+
+(defspec virtual-field-put-get-test 100
+  (prop/for-all [weight gen-weight]
+                (put-get-axiom handmade-virtual-gross-field 
+                               weight)))
+
+(defspec virtual-field-put-put-axiom 100
+  (prop/for-all [weight gen-weight
+                 gross_1 gen/small-integer
+                 gross_2 gen/small-integer]
+                (put-put-axiom handmade-virtual-gross-field
+                               weight
+                               gross_1
+                               gross_2)))
+
+;; We can also check that handmade version has the same behaviour as 
+;; the one we ontain by composition.
+(deftest virtual-gross-field-comparison-test
+  (testing "get value from virtual field"
+    (is (= (opt/view virtual-gross-field net-tare-weight)
+           (opt/view handmade-virtual-gross-field net-tare-weight))))
+  (testing "manipulate value in virtual field"
+    (is (= (opt/over virtual-gross-field #(+ % 10) net-tare-weight)
+           (opt/over handmade-virtual-gross-field #(+ % 10) net-tare-weight))))
+  (testing "put new value in the virtual field"
+    (is (= (opt/put virtual-gross-field 80 net-tare-weight)
+           (opt/put handmade-virtual-gross-field 80 net-tare-weight)))))
 
 ;; Prisms
 ;; ------
 
-;; Prisms are a way to implement pattern matching. 
+;; Prisms are a way to implement a form pattern matching in which
+;; you commit to one branch. The `cons-prism` prism is a textbook 
+;; example.
 
 ;; TODO
 
@@ -169,7 +248,7 @@
 
 ;; TODO
 
-;; Composition predicate prisms correspond to conjunction.
+;; Composition of predicate prisms correspond to conjunction.
 
 ;; TODO 
 
