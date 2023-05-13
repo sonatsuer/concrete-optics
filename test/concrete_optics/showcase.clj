@@ -194,7 +194,7 @@
   (opt/mk-lens (fn [w] (+ (:net w) (:tare w)))
                (fn [new-gross w] {:net (- new-gross (:tare w)) :tare (:tare w)})))
 
-;; Again it is good practise to test `field-put-put-axiom` as
+;; Again it is good practise to test `handmade-virtual-gross-field` as
 ;; it is manually defined.
 (def gen-weight
   (gen/let [tare gen/small-integer
@@ -240,17 +240,44 @@
 
 ;; Prisms are a way to implement a form pattern matching in which
 ;; you commit to one branch. The `cons-prism` prism is a textbook 
-;; example.
+;; example. It allows us to manipulate a non-empty vector through
+;; its decomposition into its head and tail.
 
-;; TODO
+(defn average
+  "Computes average of a nonempty vector. Since the vector is not
+   empty there is no risk of dividing by 0."
+  [d]
+  (/ (+ (:head d)
+        (reduce + 0 (:tail d)))
+     (+ 1
+        (count (:tail d)))))
+
+(deftest cons-prism-test
+  (testing "empty vector has no decomposition"
+    (is (= (opt/preview opt/cons-prism [])
+           :nothing)))
+  (testing "nonempty vector has a decomposition"
+    (is (= (opt/preview opt/cons-prism [1 2 3])
+           {:head 1 :tail [2 3]})))
+  (testing "not acting on empty vector"
+    (is (= (opt/over opt/cons-prism average [])
+           [])))
+  (testing "acting on nonempty vector"
+    (is (= (opt/over opt/cons-prism average [1 2 3])
+           2))))
 
 ;; One can even use a predicate as a pattern.
 
-;; TODO
+(def positive-prism
+  (opt/predicate-prism #(> % 0)))
 
-;; Composition of predicate prisms correspond to conjunction.
-
-;; TODO 
+(deftest predicate-prism-test
+  (testing "positive prism with negative value"
+    (is (= (opt/preview positive-prism -5)
+           :nothing)))
+  (testing "positive prism with positive value"
+    (is (= (opt/preview positive-prism 5)
+           5))))
 
 ;; On its own this again looks somewhat boring. For more
 ;; interesting examples look at the `each-positive-a` tarversal
