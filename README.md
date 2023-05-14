@@ -10,3 +10,7 @@ See the [showcase](test/concrete_optics/showcase.clj) module under `test` for us
 ## License
 
 Distributed under the Eclipse Public License version 1.0.
+
+## TODO
+- [ ] Add tests for tarversals.
+- [ ] Improve applicative tests: Make the lax-monoidal structure explicit, also test for naturality.
