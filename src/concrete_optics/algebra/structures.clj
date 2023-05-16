@@ -1,4 +1,6 @@
-(ns concrete-optics.algebra.structures)
+(ns concrete-optics.algebra.structures
+  "Constructors and examples of semigroups, monoids, apply
+   and applicatives." )
 
 (defn mk-semigroup
   "Wraps a binary associative operator as `{:binary-op binary-op}`.
@@ -38,7 +40,7 @@
 (def identity-applicative
   "This is the trivial applicative where there is no actual lifting."
   (mk-apply
-   (fn [f x] (f x)) 
+   (fn [f x] (f x))
    (fn [binary-op] (fn [x y] (binary-op x y)))
    identity))
 

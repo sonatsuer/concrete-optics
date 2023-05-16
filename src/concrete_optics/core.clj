@@ -1,4 +1,6 @@
 (ns concrete-optics.core
+  "Contains only the reexports. For most applications requiring this
+   module should be sufficient."
   (:require [concrete-optics.base :as base]
             [concrete-optics.iso.structures :as iso]
             [concrete-optics.prism.structures :as prism]

@@ -1,4 +1,5 @@
-(ns concrete-optics.common)
+(ns concrete-optics.common
+  "Utility functions.")
 
 (defn classify
   "Assumes that the input is a lawful optic and determines its kind
@@ -12,9 +13,12 @@
     :not-supported))
 
 (def capability-set
+  "Full set of available capabilities."
   #{:view :to-list :review :over :traverse})
 
 (defn get-capability
+  "Utility function to access a capabiity. If the capability
+   is not present then the function throws an exception."
   [capability optic]
   (if (contains? capability-set capability)
     (let [candidate (capability optic)]

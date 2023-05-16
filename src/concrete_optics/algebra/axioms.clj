@@ -1,4 +1,6 @@
 (ns concrete-optics.algebra.axioms
+  "Functions to test algebraic axioms of semigroups, monoids
+   apply and applicatives."
   (:require [concrete-optics.algebra.equality :refer [typed-eq]]))
 
 ;; Semigroup and monoid axioms

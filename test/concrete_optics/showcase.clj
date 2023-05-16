@@ -255,7 +255,7 @@
 (deftest cons-prism-test
   (testing "empty vector has no decomposition"
     (is (= (opt/preview opt/cons-prism [])
-           :nothing)))
+           :no-match)))
   (testing "nonempty vector has a decomposition"
     (is (= (opt/preview opt/cons-prism [1 2 3])
            {:head 1 :tail [2 3]})))
@@ -274,7 +274,7 @@
 (deftest predicate-prism-test
   (testing "positive prism with negative value"
     (is (= (opt/preview positive-prism -5)
-           :nothing)))
+           :no-match)))
   (testing "positive prism with positive value"
     (is (= (opt/preview positive-prism 5)
            5))))

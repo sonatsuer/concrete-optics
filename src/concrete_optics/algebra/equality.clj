@@ -1,4 +1,5 @@
-(ns concrete-optics.algebra.equality)
+(ns concrete-optics.algebra.equality
+  "Equality notions used in tests.")
 
 (defn- typed-eq-binary
   "Binary typed equality, overrides truthiness with actual

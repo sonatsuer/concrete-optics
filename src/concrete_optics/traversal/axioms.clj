@@ -1,1 +1,2 @@
-(ns concrete-optics.traversal.axioms)
+(ns concrete-optics.traversal.axioms
+  "Traversal examples.")
