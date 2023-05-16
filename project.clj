@@ -8,4 +8,4 @@
   :plugins [[lein-codox "0.10.8"]]
   :codox
   {:output-path "codox"
-   :source-uri "https://github.com/sonatsuer/concrete-optics/{filepath}#L{line}"})
+   :source-uri "https://github.com/sonatsuer/concrete-optics/blob/main/{filepath}#L{line}"})
