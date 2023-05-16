@@ -1,4 +1,6 @@
-# TL;DR
+# Introduction to concrete-optics
+
+## TL;DR
 
 Optics are general and composable constructions that allow bidirectional access to immutable data.
 
@@ -39,6 +41,7 @@ As a simple mental model, we can think of an optic connecting a *big* whole to a
 There are also formal laws we expect these capabilities to satisfy. You can find their precise formulations in the test modules.
 
 Here is a table which classifies optics in terms of their capabilities.
+
 |               |  view | to-list| review | over | traverse |
 | ------------- |:-----:|:------:|:------:|:----:|:--------:|
 | isomorphism   |   ✓   |    ✓   |   ✓    |  ✓   |    ✓     |
