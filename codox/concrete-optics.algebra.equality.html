@@ -4,7 +4,7 @@
 </pre></div><div class="public anchor" id="var-compare-functions"><h3>compare-functions</h3><div class="usage"><code>(compare-functions base-comparison initia-samples &amp; remaining-samples)</code></div><div class="doc"><pre class="plaintext">Checks semantic equality of functions. The usual equality for functions
 is hash based. It cannot check the equality of, say, #(+ % %) and
 #(* 2 %). The general problem is of course undecidable so we only
-test for given sample values. Meant to be used in tests.</pre></div></div><div class="public anchor" id="var-typed-eq"><h3>typed-eq</h3><div class="usage"><code>(typed-eq)</code><code>(typed-eq _single-value)</code><code>(typed-eq value &amp; rest)</code></div><div class="doc"><pre class="plaintext">In normal equality you basically check 'content' equality. 
+test for given sample values. Meant to be used in tests.</pre></div><div class="src-link"><a href="https://github.com/sonatsuer/concrete-optics/src/concrete_optics/algebra/equality.clj#L23">view source</a></div></div><div class="public anchor" id="var-typed-eq"><h3>typed-eq</h3><div class="usage"><code>(typed-eq)</code><code>(typed-eq _single-value)</code><code>(typed-eq value &amp; rest)</code></div><div class="doc"><pre class="plaintext">In normal equality you basically check 'content' equality. 
 So for instance [1 2 3] is equal to '(1 2 3). Typed eqaulity
 checks content _and_ type, so it is stricter. This is meant to
-be used in tests.</pre></div></div></div></body></html>
+be used in tests.</pre></div><div class="src-link"><a href="https://github.com/sonatsuer/concrete-optics/src/concrete_optics/algebra/equality.clj#L14">view source</a></div></div></div></body></html>
