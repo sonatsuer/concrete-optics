@@ -19,10 +19,10 @@
            (fn [s]
              (let [matched (match s)]
                (if (left? matched) (:left matched) (a-to-b matched)))))
-   :traverse (fn [app_f a-to-fb]
+   :traverse (fn [app-f a-to-fb]
                (fn [s]
                  (let [matched (match s)]
-                   (if (left? matched) ((:unit app_f) (:left matched)) ((:fmap app_f) rev (a-to-fb matched))))))})
+                   (if (left? matched) ((:pure app-f) (:left matched)) ((:fmap app-f) rev (a-to-fb matched))))))})
 
 (defn mk-simple-prism
   "preview s -> Maybe a, rev : a -> s"

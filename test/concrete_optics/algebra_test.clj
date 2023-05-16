@@ -17,7 +17,7 @@
   (prop/for-all [x gen/small-integer
                  y gen/small-integer
                  z gen/small-integer]
-                (associativity-axiom (monoid->semigroup additive-monoid) x y z)))
+                (associativity-axiom additive-monoid x y z)))
 
 (defspec additive-monoid-left-unit 100
   (prop/for-all [x gen/small-integer]
@@ -32,7 +32,7 @@
   (prop/for-all [x (gen/vector gen/any-equatable)
                  y (gen/vector gen/any-equatable)
                  z (gen/vector gen/any-equatable)]
-                (associativity-axiom (monoid->semigroup vector-monoid) x y z)))
+                (associativity-axiom vector-monoid x y z)))
 
 (defspec vector-monoid-left-unit 100
   (prop/for-all [x (gen/vector gen/any-equatable)]
