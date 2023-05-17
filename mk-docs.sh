@@ -1,10 +1,12 @@
 #!/bin/bash
 
-touch doc/showcase.md
-echo '# Showcase' > doc/showcase.md
-echo '' >> doc/showcase.md
-echo '```clojure' >> doc/showcase.md
-cat test/concrete_optics/showcase.clj >> doc/showcase.md
-echo '```' >> doc/showcase.md
-echo '' >> doc/showcase.md
+LOCATION=doc/showcase.md
+
+touch $LOCATION
+echo '# Showcase' > $LOCATION
+echo '' >> $LOCATION
+echo '```clojure' >> $LOCATION
+cat test/concrete_optics/showcase.clj >> $LOCATION
+echo '```' >> $LOCATION
+echo '' >> $LOCATION
 lein codox

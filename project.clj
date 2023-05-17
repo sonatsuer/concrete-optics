@@ -7,5 +7,5 @@
                  [org.clojure/test.check "1.1.0"]]
   :plugins [[lein-codox "0.10.8"]]
   :codox
-  {:output-path "codox"
+  {:output-path "docs"
    :source-uri "https://github.com/sonatsuer/concrete-optics/blob/main/{filepath}#L{line}"})
