@@ -13,7 +13,7 @@
 
 (defn typed-eq
   "In normal equality you basically check 'content' equality. 
-   So for instance [1 2 3] is equal to '(1 2 3). Typed eqaulity
+   So for instance `[1 2 3]` is equal to `'(1 2 3)`. Typed eqaulity
    checks content _and_ type, so it is stricter. This is meant to
    be used in tests."
   ([] true)
@@ -22,8 +22,8 @@
 
 (defn compare-functions
   "Checks semantic equality of functions. The usual equality for functions
-   is hash based. It cannot check the equality of, say, #(+ % %) and
-   #(* 2 %). The general problem is of course undecidable so we only
+   is hash based. It cannot check the equality of, say, `#(+ % %)` and
+   `#(* 2 %)`. The general problem is of course undecidable so we only
    test for given sample values. Meant to be used in tests."
   ([base-comparison initia-samples & remaining-samples]
    (fn [f g]

@@ -61,6 +61,7 @@
   (and (map? x) (= (keys x) '(:failure))))
 
 (defn fail-with
+  "Wraps a value as a failure so that `failure?` can detect it."
   [x]
   {:failure x})
 

@@ -15,4 +15,3 @@ Distributed under the Eclipse Public License version 1.0.
 
 - [ ] Add tests for tarversals.
 - [ ] Improve applicative tests: Make the lax-monoidal structure explicit, also test for naturality.
-- [ ] Implement tree traversal.

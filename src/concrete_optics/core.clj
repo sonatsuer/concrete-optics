@@ -36,4 +36,5 @@
 ;; Reexports from traversal
 (def mk-traversal traversal/mk-traversal)
 (def vector-traversal traversal/vector-traversal)
+(def tree-traversal traversal/tree-traversal)
 (def ix traversal/ix)
