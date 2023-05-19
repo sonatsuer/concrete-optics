@@ -5,7 +5,7 @@ A simple minded implementation of optics in Clojure. Optics are general and comp
 ## Documents
 
 [The docs](http://sonatsuer.github.io/concrete-optics) contain a showcase, a high level description of the design and the API reference. You can generate documents by running `./mk-docs.sh` and view
-the docs locally under `codox/index.html`.
+the docs locally under `docs/index.html`.
 
 ## License
 
