@@ -1,4 +1,4 @@
-(defproject concrete-optics "0.1.0-SNAPSHOT"
+(defproject com.github.sonatsuer/concrete-optics "0.1.0-SNAPSHOT"
   :description "Dead simple optics in Clojure"
   :url "https://github.com/sonatsuer/concrete-optics"
   :license {:name "Eclipse Public License"
